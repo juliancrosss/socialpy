@@ -25,4 +25,10 @@ def crear_usuario(cls, usuario, contraseña, email, administrador=False):
              es_administrador=administrador)
      except IntegrityError:
          raise ValueError("Usuario ya existe")
+         
+         
+    def initialize():
+        DATABASE.connect()
+        DATABASE.create_tables([User], safe=True)
+        DATABASE.close
      
