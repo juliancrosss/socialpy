@@ -1,7 +1,8 @@
-from flask import Flask, g
+from flask import (Flask, g, render_template, flash, redirect, url_for)
 from flask.ext.login import LoginManager
 
-import modelos
+import forms
+import models
 
   DEBUG = True
   PORT = 8000
@@ -9,6 +10,7 @@ import modelos
   
   app = Flask(__name__)
   app.secret_key ='auesh.bouoasthu.43,jdkfhksafhskjfsdjjkadfdjdhfk'
+  
   login_manager = LoginManager()
   login_manager.init_app(app)
   login_manager.login_view = 'login'
@@ -31,6 +33,27 @@ import modelos
       """Close the database connectiong after each request."""
      g.db.close()
      return response
+     
+     
+     
+  @app.route('/register', methods=('GET', 'POST'))
+    def register():
+        form = forms.RegisterForm()
+        if form.valide_on_submit():
+          flash("Estas registrado!", "Correctamente")
+          models.User.create_user(
+               username=form.username.data,
+               email=form.email.data,
+               password=form.password.data
+          )
+          return redirect(url_for('index'))
+          return render_template('register.html', form=form)
+          
+  @app.route('/')
+    def index():
+        return 'Hey'
+          
+          
      
      
      
