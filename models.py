@@ -29,4 +29,8 @@ class User(UserMixin, Model):
                     is_admin=admin)
             except IntegrityError:
                 raise ValueError("Usuario ya Existe")
+       def initialize():
+              DATABASE.connect()
+              DATABASE.create_tables([User], safe=True)
+              DATABASE.close()
                 
