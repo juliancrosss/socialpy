@@ -41,7 +41,13 @@ def after_request(response):
   
   
   if __name__ == '__main__':
-    
+    models.initialize()
+    models.User.create_user(
+      name='juliancruz',
+      email='freakcruz@me.com',
+      password='password',
+      admin=True
+    )
     app.run(debug=DEBUG, host=HOST, port=PORT)
   
 
