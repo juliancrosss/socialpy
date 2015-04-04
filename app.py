@@ -1,68 +1,47 @@
-from flask import (Flask, g, render_template, flash, redirect, url_for)
+from flask import Flask, g
 from flask.ext.login import LoginManager
 
-import forms
 import models
 
-  DEBUG = True
-  PORT = 8000
-  HOST = '0.0.0.0'
+DEBUG = True
+PORT = 8000
+HOST = '0.0.0.0'
+
+app = Flask(__name__)
+app.secret_key = 'auoesh.bouoastuh.43,uoausoehuosth3ououea.auoub!' 
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
+@login_manager.user_loader
+def load_user(userid):
+  try:
+     return models.User.get(models.User.id == userid)
+  except models.DoesNotExist:
+     return None
   
-  app = Flask(__name__)
-  app.secret_key ='auesh.bouoasthu.43,jdkfhksafhskjfsdjjkadfdjdhfk'
+
+
+
+@app.before_request
+def before_request():
+  """Connect to the database before each request."""
+  g.db = models.DATABASE
+  g.db.connect()
   
-  login_manager = LoginManager()
-  login_manager.init_app(app)
-  login_manager.login_view = 'login'
   
-  @login_manager.user_loader
-    def load_user(userid):
-      try:
-        return modelos.User.get(models.User.id == userid)
-           except models.DoesNotExist:
-          return None
+@app.after_request
+def after_request(response):
+  """Close the database connection after each request."""
+  g.db.close()
+  return response
   
-  @app.before_request
-  def before_request():
-    """Connect to the database before each request."""
-    g.db = modelos.DATABASE
-    g.db.connect()
-    
-   @app.after_request
-   def before_request(response):
-      """Close the database connectiong after each request."""
-     g.db.close()
-     return response
-     
-     
-     
-  @app.route('/register', methods=('GET', 'POST'))
-    def register():
-        form = forms.RegisterForm()
-        if form.valide_on_submit():
-          flash("Estas registrado!", "Correctamente")
-          models.User.create_user(
-               username=form.username.data,
-               email=form.email.data,
-               password=form.password.data
-          )
-          return redirect(url_for('index'))
-          return render_template('register.html', form=form)
-          
-  @app.route('/')
-    def index():
-        return 'Hey'
-          
-          
-     
-     
-     
+  
+  
   if __name__ == '__main__':
-    models.initialize()
-    models.User.create_user(
-       name = 'juliancruz'
-       contraseña = 'contraseña',
-       email ='freakcruz@me.com',
-       administrador = True
-       )
+    
     app.run(debug=DEBUG, host=HOST, port=PORT)
+  
+
