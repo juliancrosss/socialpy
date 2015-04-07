@@ -50,7 +50,7 @@ def register():
       email=form.email.data,
       password=form.password.data
     )
-    return redirect(url_for('index))
+    return redirect(url_for('index)) 
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -61,6 +61,14 @@ def login():
       user = models.User.get(models.User.email == form.email.data)
     except models.DoesNotExist:
       flash("Your email or password doesn't match!", "error")
+    else:
+      if check_password_hash(user.password, form.password.data):
+            login_user(user)
+            flash("You've been logged in¡", "success")
+            return redirect(url_for('index'))
+      else:
+        flash("You email or password doesn't match¡", "error")
+        return render_template('login.html', form=form)
       
 
 
